@@ -6,7 +6,16 @@ import argparse
 import classes
 
 
-def main(urls, extension, list, database, timeout, urlsavailable, server_address, start_server):
+def main(
+    urls,
+    extension,
+    list,
+    database,
+    timeout,
+    urlsavailable,
+    server_address,
+    start_server,
+):
 
     print(
         """
@@ -35,8 +44,8 @@ def main(urls, extension, list, database, timeout, urlsavailable, server_address
 
         for url in urls:
             if ("http" or "https") not in url:
-                url_http = "http://www." + url
-                url_https = "https://www." + url
+                url_http = "http://" + url
+                url_https = "https://" + url
                 urls.remove(url)
                 urls.append(url_http)
                 urls.append(url_https)
@@ -67,7 +76,9 @@ def main(urls, extension, list, database, timeout, urlsavailable, server_address
 
         all_results = []
         for url in urls:
-            results = operations.start_bruteforce(url, extension, word_list, database, timeout)
+            results = operations.start_bruteforce(
+                url, extension, word_list, database, timeout
+            )
             for result in results:
                 all_results.append(result)
 
@@ -143,7 +154,7 @@ if __name__ == "__main__":
         help="This is to choose the number of directories to bruteforce.",
     )
     """
-        parser.add_argument(
+    parser.add_argument(
         "-t",
         dest="timeout",
         action="store",
