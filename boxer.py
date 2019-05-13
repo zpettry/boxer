@@ -60,8 +60,11 @@ def main(
 
     # Directory bruteforce with database persistence.
     if urls and list and database:
-        with open(urls) as f:
-            urls = f.read().splitlines()
+        if ".txt" in urls:
+            with open(urls) as f:
+                urls = f.read().splitlines()
+        else:
+            urls = [urls]
 
         for url in urls:
             if ("http" or "https") not in url:
