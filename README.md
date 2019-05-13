@@ -34,7 +34,7 @@ Run a scan:
 
 Run a scan and setup a database for persistent results:
 
-    $ python3 boxery.py -u https://www.google.com -w common.txt -d database
+    $ python3 boxer.py -u https://www.google.com -w common.txt -d database
 
 Run a scan with a 'urls.txt' file (with or without a database).
 
