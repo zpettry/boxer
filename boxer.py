@@ -143,14 +143,14 @@ if __name__ == "__main__":
         help="This is to choose the number of directories to bruteforce.",
     )
     """
-    parser.add_argument(
-    "-t",
-    dest="timeout",
-    action="store",
-    default=30,
-    type=int,
-    required=False,
-    help="This is to choose how long to wait for replies from the HTTP/S server.",
+        parser.add_argument(
+        "-t",
+        dest="timeout",
+        action="store",
+        default=30,
+        type=int,
+        required=False,
+        help="This is to choose how long to wait for replies from the HTTP/S server.",
     )
     parser.add_argument(
         "-s",
