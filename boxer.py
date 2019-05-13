@@ -65,8 +65,8 @@ def main(
 
         for url in urls:
             if ("http" or "https") not in url:
-                url_http = "http://www." + url
-                url_https = "https://www." + url
+                url_http = "http://" + url
+                url_https = "https://" + url
                 urls.remove(url)
                 urls.append(url_http)
                 urls.append(url_https)
