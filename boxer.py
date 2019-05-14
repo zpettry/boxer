@@ -9,7 +9,7 @@ import classes
 def main(
     urls,
     extension,
-    list,
+    word_list_file,
     database,
     timeout,
     response_codes,
@@ -37,7 +37,7 @@ def main(
     operations = classes.Operations()
 
     # Ad-hoc directory bruteforce.
-    if urls and list and not database:
+    if urls and word_list_file and not database:
         if ".txt" in urls:
             with open(urls) as f:
                 urls = f.read().splitlines()
@@ -52,7 +52,7 @@ def main(
                 urls.append(url_http)
                 urls.append(url_https)
 
-        with open(list) as l:
+        with open(word_list_file) as l:
             word_list = l.read().splitlines()
 
         for url in urls:
@@ -63,7 +63,7 @@ def main(
         exit()
 
     # Directory bruteforce with database persistence.
-    if urls and list and database:
+    if urls and word_list_file and database:
         if ".txt" in urls:
             with open(urls) as f:
                 urls = f.read().splitlines()
@@ -78,7 +78,7 @@ def main(
                 urls.append(url_http)
                 urls.append(url_https)
 
-        with open(list) as l:
+        with open(word_list_file) as l:
             word_list = l.read().splitlines()
 
         all_results = []
@@ -133,7 +133,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "-w",
-        dest="list",
+        dest="word_list_file",
         action="store",
         required=False,
         help="This is the wordslist for directory bruteforcing",
