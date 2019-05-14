@@ -12,9 +12,11 @@ def main(
     list,
     database,
     timeout,
+    response_codes,
     urlsavailable,
     server_address,
     start_server,
+    host,
 ):
 
     print(
@@ -54,7 +56,9 @@ def main(
             word_list = l.read().splitlines()
 
         for url in urls:
-            operations.start_bruteforce(url, extension, word_list, database, timeout)
+            operations.start_bruteforce(
+                url, extension, word_list, database, timeout, response_codes
+            )
 
         exit()
 
@@ -80,7 +84,7 @@ def main(
         all_results = []
         for url in urls:
             results = operations.start_bruteforce(
-                url, extension, word_list, database, timeout
+                url, extension, word_list, database, timeout, response_codes
             )
             for result in results:
                 all_results.append(result)
@@ -99,10 +103,12 @@ def main(
         exit()
 
     # Start the server to allow for querying directory database.
-    if start_server and database:
+    if start_server and database and host:
         server = classes.Server()
 
-        server.start(database)
+        server.start(database, host)
+
+    print("Please add an argument for parsing.")
 
 
 if __name__ == "__main__":
@@ -140,24 +146,6 @@ if __name__ == "__main__":
         help="This is the title for the local database. Database will be stored in json automatically.",
     )
     parser.add_argument(
-        "-urlsavailable",
-        dest="urlsavailable",
-        action="store_true",
-        required=False,
-        help="This is to get all available urls to query for sub-directories.",
-    )
-    """
-    parser.add_argument(
-        "-r",
-        dest="recursion",
-        action="store",
-        default=1,
-        type=int,
-        required=False,
-        help="This is to choose the number of directories to bruteforce.",
-    )
-    """
-    parser.add_argument(
         "-t",
         dest="timeout",
         action="store",
@@ -165,6 +153,23 @@ if __name__ == "__main__":
         type=int,
         required=False,
         help="This is to choose how long to wait for replies from the HTTP/S server.",
+    )
+    parser.add_argument(
+        "-r",
+        dest="response_codes",
+        nargs="+",
+        action="store",
+        default=[200, 204, 301, 302, 307, 403],
+        type=int,
+        required=False,
+        help="This is to choose how long to wait for replies from the HTTP/S server.",
+    )
+    parser.add_argument(
+        "-urlsavailable",
+        dest="urlsavailable",
+        action="store_true",
+        required=False,
+        help="This is to get all available urls to query for sub-directories.",
     )
     parser.add_argument(
         "-s",
@@ -179,6 +184,15 @@ if __name__ == "__main__":
         action="store_true",
         required=False,
         help="This is for starting the web server.",
+    )
+    parser.add_argument(
+        "-host",
+        dest="host",
+        action="store",
+        default="127.0.0.1",
+        type=str,
+        required=False,
+        help="This is host address for the web server.",
     )
 
     args = parser.parse_args()
