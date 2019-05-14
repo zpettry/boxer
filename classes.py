@@ -12,21 +12,16 @@ import urllib3
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# Gobuster default response codes without 204, 301, 302, 307, 403.
-
-response_codes = [200]
-
 
 class Operations:
-    async def request(self, session, url, database, timeout):
+    async def request(self, session, url, database, timeout, response_codes):
 
         try:
             async with session.get(url, allow_redirects=False) as response:
 
                 # print(f"Testing: {url}")
-
                 if response.status in response_codes:
-                    print(url)
+                    print(f"Status: {response.status}   {url}")
                     return url
 
         except asyncio.TimeoutError:
@@ -41,7 +36,9 @@ class Operations:
             print(f"Client connector error: {url}")
             pass
 
-    async def run_quickly(self, url, extension, directory_list, i, database, timeout):
+    async def run_quickly(
+        self, url, extension, directory_list, i, database, timeout, response_codes
+    ):
 
         start = time.time()
 
@@ -55,7 +52,6 @@ class Operations:
         ) as session:
 
             tasks = []
-
             for directory in directory_list:
                 url_modified = url + "/" + directory
                 if extension:
@@ -63,12 +59,16 @@ class Operations:
                 count = url_modified.count("//")
                 if count < 2:
                     task = asyncio.create_task(
-                        self.request(session, url_modified, database, timeout)
+                        self.request(
+                            session, url_modified, database, timeout, response_codes
+                        )
                     )
                     tasks.append(task)
                     if extension:
                         task_extension = asyncio.create_task(
-                            self.request(session, url_modified_extension, database, timeout)
+                            self.request(
+                                session, url_modified_extension, database, timeout
+                            )
                         )
                         tasks.append(task_extension)
                 """
@@ -126,7 +126,9 @@ class Operations:
                 return
             orig_handler(context)
 
-    def start_bruteforce(self, url, extension, word_list, database, timeout):
+    def start_bruteforce(
+        self, url, extension, word_list, database, timeout, response_codes
+    ):
 
         print(
             f"\nStarting bruteforce on {url} for response code(s) {response_codes}...\n"
@@ -147,7 +149,9 @@ class Operations:
             loop.set_exception_handler(self.ignore_ssl_error)
 
             responses = loop.run_until_complete(
-                self.run_quickly(url, extension, word_list, i, database, timeout)
+                self.run_quickly(
+                    url, extension, word_list, i, database, timeout, response_codes
+                )
             )
 
             urls = []
@@ -237,7 +241,7 @@ class Operations:
 
 
 class Server:
-    def start(self, database):
+    def start(self, database, host):
 
         # Initialize our Flask application.
         app = flask.Flask(__name__)
@@ -306,5 +310,5 @@ class Server:
             # Return the data as a JSON response.
             return flask.jsonify(data)
 
-        app.run(host="0.0.0.0", port=45000, ssl_context="adhoc")
+        app.run(host=host, port=45000, ssl_context="adhoc")
 
