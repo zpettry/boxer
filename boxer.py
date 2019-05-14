@@ -90,7 +90,7 @@ def main(
 
     # Query local database for url or get urls available to query.
     if (urls or urlsavailable) and database and not server_address:
-        operations.query_locally(urls, database, urls_available)
+        operations.query_locally(urls, database, urlsavailable)
         exit()
 
     # Query the remote server with url or get urls available to query.
