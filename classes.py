@@ -67,22 +67,15 @@ class Operations:
                     if extension:
                         task_extension = asyncio.create_task(
                             self.request(
-                                session, url_modified_extension, database, timeout
+                                session,
+                                url_modified_extension,
+                                database,
+                                timeout,
+                                response_codes,
                             )
                         )
                         tasks.append(task_extension)
-                """
-                if count < 2:
-                    task = asyncio.ensure_future(
-                        self.request(session, url_modified, database)
-                    )
-                    tasks.append(task)
-                    if extension:
-                        task_extension = asyncio.ensure_future(
-                            self.request(session, url_modified_extension, database)
-                        )
-                        tasks.append(task_extension)
-                    """
+
             await asyncio.gather(*tasks, return_exceptions=False)
 
             end = time.time()
