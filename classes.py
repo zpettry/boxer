@@ -14,15 +14,15 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 class Operations:
-    async def request(self, session, url, database, timeout, response_codes):
+    async def request(self, session, url, database, timeout):
 
         try:
             async with session.get(url, allow_redirects=False) as response:
 
                 # print(f"Testing: {url}")
-                if response.status in response_codes:
+                if response.status in response_codez:
                     print(f"Status: {response.status}   {url}")
-                    return url
+                    return response.status, url
 
         except asyncio.TimeoutError:
             print(f"asyncio.TimeoutError after {timeout} seconds: {url}")
@@ -36,9 +36,7 @@ class Operations:
             print(f"Client connector error: {url}")
             pass
 
-    async def run_quickly(
-        self, url, extension, directory_list, i, database, timeout, response_codes
-    ):
+    async def run_quickly(self, url, extension, directory_list, database, timeout):
 
         start = time.time()
 
@@ -59,19 +57,13 @@ class Operations:
                 count = url_modified.count("//")
                 if count < 2:
                     task = asyncio.create_task(
-                        self.request(
-                            session, url_modified, database, timeout, response_codes
-                        )
+                        self.request(session, url_modified, database, timeout)
                     )
                     tasks.append(task)
                     if extension:
                         task_extension = asyncio.create_task(
                             self.request(
-                                session,
-                                url_modified_extension,
-                                database,
-                                timeout,
-                                response_codes,
+                                session, url_modified_extension, database, timeout
                             )
                         )
                         tasks.append(task_extension)
@@ -123,40 +115,38 @@ class Operations:
         self, url, extension, word_list, database, timeout, response_codes
     ):
 
+        global response_codez
+        response_codez = response_codes
+
         print(
             f"\nStarting bruteforce on {url} for response code(s) {response_codes}...\n"
         )
 
         database = []
 
-        i = 1
-        while i <= 1:  # recursion and recursion <= 2:
-            """
-            I will use this when the above function is no longer needed.
-            responses = asyncio.run(
-                self.run_quickly(urls, extension, word_list, i, database),            )
-            
-            """
-            loop = asyncio.get_event_loop()
+        """
+        I will use this when the above function is no longer needed.
+        responses = asyncio.run(
+            self.run_quickly(urls, extension, word_list, i, database))
+        
+        """
+        loop = asyncio.get_event_loop()
 
-            loop.set_exception_handler(self.ignore_ssl_error)
+        loop.set_exception_handler(self.ignore_ssl_error)
 
-            responses = loop.run_until_complete(
-                self.run_quickly(
-                    url, extension, word_list, i, database, timeout, response_codes
-                )
-            )
+        responses = loop.run_until_complete(
+            self.run_quickly(url, extension, word_list, database, timeout)
+        )
 
-            urls = []
+        urls = []
 
-            for response in responses:
-                response = response.result()
-                if response != None:
-                    urls.append(response)
+        for response in responses:
+            response = response.result()
+            if response != None:
+                urls.append(response)
 
-                if (response not in database) and (response != None):
-                    database.append(response)
-            i = i + 1
+            if (response not in database) and (response != None):
+                database.append(response)
 
         return urls
 
@@ -165,14 +155,13 @@ class Operations:
         print(f"Creating local database: {database}.json")
 
         database_dict = {}
-
         for url in urls:
             if url not in database_dict.keys():
                 database_dict[url] = []
 
         for k, v in database_dict.items():
             for url in results:
-                if k in url:
+                if k in url[1]:
                     database_dict[k].append(url)
 
         with open(f"{database}.json", "w") as outfile:
@@ -185,8 +174,6 @@ class Operations:
         with open(database, "r") as json_file:
             database = json.load(json_file)
 
-        # print(f"Looking up: {url}\n")
-
         if urls_available:
             print("Available URLS in database:\n")
             for k, v in database.items():
@@ -198,7 +185,7 @@ class Operations:
                 result = v
 
         for url in result:
-            print(url)
+            print(f"Status: {url[0]}   {url[1]}")
 
     def query_server(self, url, server, urls_available):
 
@@ -221,14 +208,14 @@ class Operations:
         try:
 
             if response["directories"]:
-                # Loop over the predictions and display them.
+                # Loop over the directories and display them.
                 for url in response["directories"][0]["result"]:
-                    print(url)
+                    print(f"Status: {url[0]}   {url[1]}")
 
         # Ensure the request was sucessful.
         except:
 
-            # Loop over the predictions and display them.
+            # Loop over the directories and display them.
             for url in response["urls_available"][0]["result"]:
                 print(url)
 
