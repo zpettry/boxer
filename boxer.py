@@ -162,7 +162,7 @@ if __name__ == "__main__":
         default=[200, 204, 301, 302, 307, 403],
         type=int,
         required=False,
-        help="This is to choose how long to wait for replies from the HTTP/S server.",
+        help="This can change the response codes. ex. 200 307 403 .",
     )
     parser.add_argument(
         "-urlsavailable",
