@@ -25,7 +25,9 @@ class Operations:
                     return response.status, url
 
         except asyncio.TimeoutError:
-            print(f"asyncio.TimeoutError after {timeout} seconds: {url}")
+            print(
+                f"asyncio.TimeoutError after {timeout} seconds: {url} . Consider increasing the timeout from default."
+            )
             pass
 
         except aiohttp.client_exceptions.ServerDisconnectedError:
@@ -44,7 +46,6 @@ class Operations:
         timeout_aiohttp = aiohttp.ClientTimeout(total=timeout)
         connector = aiohttp.TCPConnector(verify_ssl=False)
 
-        # print(f"Directory level: {i}")
         async with aiohttp.ClientSession(
             timeout=timeout_aiohttp, connector=connector
         ) as session:
