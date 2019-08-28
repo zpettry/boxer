@@ -44,18 +44,18 @@ def main(
         else:
             urls = [urls]
 
+        urls_modified = []
         for url in urls:
             if ("http" or "https") not in url:
                 url_http = "http://" + url
                 url_https = "https://" + url
-                urls.remove(url)
-                urls.append(url_http)
-                urls.append(url_https)
+                urls_modified.append(url_http)
+                urls_modified.append(url_https)
 
         with open(word_list_file) as l:
             word_list = l.read().splitlines()
 
-        for url in urls:
+        for url in urls_modified:
             operations.start_bruteforce(
                 url, extension, word_list, database, timeout, response_codes
             )
@@ -70,19 +70,19 @@ def main(
         else:
             urls = [urls]
 
+        urls_modified = []
         for url in urls:
             if ("http" or "https") not in url:
                 url_http = "http://" + url
                 url_https = "https://" + url
-                urls.remove(url)
-                urls.append(url_http)
-                urls.append(url_https)
+                urls_modified.append(url_http)
+                urls_modified.append(url_https)
 
         with open(word_list_file) as l:
             word_list = l.read().splitlines()
 
         all_results = []
-        for url in urls:
+        for url in urls_modified:
             results = operations.start_bruteforce(
                 url, extension, word_list, database, timeout, response_codes
             )
